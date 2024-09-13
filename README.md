@@ -63,7 +63,7 @@ L'applicazione dovrà permettere di:
 
 ### Alcuni consigli utili
 
-- conoscetevi nel team, come persone, esperienze e skil
+- conoscetevi nel team, come persone, esperienze e skill
 - studiate il progetto
 - fate un piano: del progetto in generale, tenete in considerazione adeguatamente le priorità indicate nel progetto stesso (quel che sta nella milestone finale è meno prioritario di quel che sta nella milestone iniziale, avere tutto completo tranne la milestone iniziale non è un buon risultato)
 - suddividete i compiti nel team, in base a competenze e disponibilità
