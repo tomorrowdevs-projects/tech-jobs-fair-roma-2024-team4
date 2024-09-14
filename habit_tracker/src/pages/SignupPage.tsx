@@ -1,8 +1,6 @@
-import { useState } from 'react';
-
-
 import { auth } from '../../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 import {
     Box,
     Button,
@@ -11,23 +9,24 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
-export default function LoginPage() {
-    const navigate = useNavigate();
+import { useState } from "react";
 
+
+export default function SignupPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         try {
             setError(null);
-            console.log(email, password);
-            await signInWithEmailAndPassword(auth, email, password);
-            navigate('/');
+            await createUserWithEmailAndPassword(auth, email, password);
+            setSuccess('Registrazione avvenuta con successo!');
         } catch (error: any) {
             setError(error.message);
         }
@@ -36,11 +35,10 @@ export default function LoginPage() {
     return (
         <Container maxWidth="xs">
             <Typography variant="h5" align="center" gutterBottom>
-                Login
+                Registrati
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
-                    autoComplete='username'
                     label="E-mail"
                     type="email"
                     fullWidth
@@ -49,33 +47,37 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
-                    autoComplete='current-password'
+                    autoComplete='off'
                     label="Password"
                     type="password"
                     fullWidth
                     margin="normal"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+
                 />
+                {success &&
+                    <Box display="flex" sx={{ my: 2 }}>
+                        <Typography color="success">{success}</Typography>
+                        <Link href="/login" variant="body1" sx={{ ml: 1 }}>
+                            Vai al login
+                        </Link>
+                    </Box>}
+                {error && <Typography color="error">{error}</Typography>}
                 <Button
+
                     type="submit"
                     variant="contained"
                     color="primary"
                     fullWidth
                     disabled={!email || !password}
                 >
-                    Accedi
+                    Registrati
                 </Button>
-                {error && <Typography color="error">{error}</Typography>}
-                <Box sx={{ mt: 3 }}>
-                    <Link href="/password-reset" variant="body2">
-                        Password dimenticata?
-                    </Link>
-                </Box>
                 <Box display="flex" sx={{ mt: 2 }}>
-                    <Typography variant='body2'>Non hai un account?</Typography>
-                    <Link href="/signup" variant="body2" sx={{ ml: 1 }}>
-                        Registrati
+                    <Typography variant='body2'>Hai già un account?</Typography>
+                    <Link href="/login" variant="body2" sx={{ ml: 1 }}>
+                        Accedi
                     </Link>
                 </Box>
             </form>
