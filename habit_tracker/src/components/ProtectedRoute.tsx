@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 
 import { auth } from '../../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { Box, CircularProgress } from '@mui/material';
 
 interface ProtectedRouteProps {
     element: React.ReactElement;
@@ -13,7 +14,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
     const [user, loading] = useAuthState(auth);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <CircularProgress />
+        </Box>;
     }
 
     if (!user) {

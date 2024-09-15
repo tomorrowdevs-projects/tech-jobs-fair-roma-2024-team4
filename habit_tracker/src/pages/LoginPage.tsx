@@ -16,8 +16,8 @@ import { useNavigate } from 'react-router-dom';
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (event: React.FormEvent) => {

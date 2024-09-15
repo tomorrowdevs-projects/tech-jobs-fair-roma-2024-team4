@@ -14,7 +14,7 @@ import { useState } from "react";
 
 
 export default function ResetPasswordPage() {
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (event: React.FormEvent) => {
