@@ -24,8 +24,6 @@ export const useHabits = () => {
                 completionDates: newHabit.completionDates.map((date) => Timestamp.fromDate(date)),
             };
 
-            console.log(habit);
-
             await addDoc(collection(db, 'habits'), habit);
         } catch (e) {
             setError('Errore durante l\'aggiunta dell\'habit.');

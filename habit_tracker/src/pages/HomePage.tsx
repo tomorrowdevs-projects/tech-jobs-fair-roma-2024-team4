@@ -1,37 +1,96 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Grid2, Stack, Typography } from '@mui/material';
+import Calendar from 'react-calendar';
 
-
+import { AppBar, Avatar, Box, Card, CardContent, Grid2, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { useHabits } from '../hooks/useHabits';
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
-import { useHabits } from '../hooks/useHabits';
+
+import 'react-calendar/dist/Calendar.css';
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function HomePage() {
-
     const navigate = useNavigate();
     const { error, habits, loading } = useHabits();
 
+    const [selectedDate, setSelectedDate] = useState<Value>(new Date());
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    const filteredHabits = habits.filter(habit => {
+        const habitStart = habit.startDate;
+        const habitEnd = habit.endDate || habit.startDate;
+
+
+        if (selectedDate instanceof Date) {
+            return selectedDate >= habitStart && selectedDate <= habitEnd;
+        }
+        return false;
+    });
+
+
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
+            navigate('/');
         } catch (error) {
         }
-    }
+    };
 
     if (loading) return <Typography variant="h6">Caricamento...</Typography>;
     if (error) return <Typography variant="h6" color="error">{error}</Typography>;
 
     return (
-        <Grid2 container spacing={2} sx={{ height: '100vh' }}>
+        <Box sx={{ height: '90vh' }}>
 
-            <Grid2 sx={{ overflowY: 'auto', padding: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                    Ciao! Sei loggato con l'e-mail: {auth.currentUser?.email}
-                </Typography>
-                <Box sx={{ padding: 2 }}>
-                    <Stack spacing={2}>
-                        {habits.map((habit) => (
+            <AppBar position="static" sx={{ height: '80px' }}>
+                <Toolbar sx={{ height: '80px' }}>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                        Habit Tracker
+                    </Typography>
+                    <IconButton onClick={handleMenuOpen}>
+                        <Avatar alt="Profile Icon" />
+                    </IconButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        sx={{ mt: 8 }}
+                    >
+                        <MenuItem>Profilo</MenuItem>
+                        <MenuItem>Grafici</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
+                </Toolbar>
+            </AppBar>
+
+            <Grid2 container sx={{ flex: 1, overflow: 'hidden' }}>
+                <Grid2 sx={{ flex: 3, overflowY: 'auto', padding: 2 }}>
+                    <Calendar onChange={setSelectedDate} value={selectedDate} />
+                </Grid2>
+
+                <Grid2 sx={{ flex: 9, overflowY: 'auto', padding: 2 }}>
+                    <Grid2 container spacing={2}>
+                        {filteredHabits.map((habit) => (
                             <Card key={habit.id}>
                                 <CardContent>
                                     <Typography variant="h6" component="div">
@@ -40,62 +99,30 @@ export default function HomePage() {
                                     <Typography color="text.secondary">
                                         {habit.isAllDay ? 'Tutto il giorno' : `Dalle ${habit.startTime || 'N/A'} alle ${habit.endTime || 'N/A'}`}
                                     </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Ricorrenza: ${habit.recurrence ? habit.recurrence : 'Nessuna'}`}
-                                    </Typography>
-                                    {/* <Typography color="text.secondary">
-                                        {habit.isCompleted ? 'Completato' : 'Non completato'}
-                                    </Typography> */}
-                                    <Typography color="text.secondary">
-                                        {`Data di inizio: ${habit.startDate.toLocaleDateString()}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Data di fine: ${habit.endDate ? habit.endDate.toLocaleDateString() : 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Orario di inizio: ${habit.startTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Orario di fine: ${habit.endTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Notifica alle: ${habit.notificationTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Date di completamento: ${habit.completionDates.map(date => date.toLocaleDateString()).join(', ')}`}
-                                    </Typography>
                                 </CardContent>
                             </Card>
                         ))}
-                    </Stack>
-                </Box>
+                    </Grid2>
+                </Grid2>
             </Grid2>
 
-
-            <Grid2 sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', mb: 2 }}>
-                    <Button variant="contained" color="primary" sx={{ width: '40%' }}
-                        onClick={() => navigate('/addHabit')}>
-                        Aggiungi habit
-                    </Button>
-                    <Button variant="contained" color="secondary" sx={{ width: '40%' }}>
-                        Test 1
-                    </Button>
-                </Box>
-
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', mb: 2 }}>
-                    <Button variant="contained" color="success" sx={{ width: '40%' }}>
-                        Test 2
-                    </Button>
-                    <Button variant="contained" color="error" sx={{ width: '40%' }}>
-                        Test 3
-                    </Button>
-                </Box>
-
-                <Button variant="contained" color="primary" onClick={handleLogout} sx={{ width: '40%' }}>
-                    Logout
-                </Button>
-            </Grid2>
-        </Grid2>
-    )
+            <IconButton
+                color="primary"
+                aria-label="Aggiungi habit"
+                onClick={() => navigate('/addHabit')}
+                sx={{
+                    position: 'fixed',
+                    bottom: 16,
+                    right: 16,
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': {
+                        bgcolor: 'primary.dark',
+                    }
+                }}
+            >
+                <AddIcon />
+            </IconButton>
+        </Box>
+    );
 }
