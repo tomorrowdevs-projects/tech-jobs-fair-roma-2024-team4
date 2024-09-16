@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/protectedroute.tsx","./src/hooks/usehabits.ts","./src/pages/addhabitpage.tsx","./src/pages/homepage.tsx","./src/pages/loginpage.tsx","./src/pages/resetpasswordpage.tsx","./src/pages/signuppage.tsx","./src/types/habit.ts","./src/types/recurrence.ts"],"version":"5.6.2"}
