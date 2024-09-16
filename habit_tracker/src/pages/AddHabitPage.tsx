@@ -55,7 +55,6 @@ export default function AddHabitForm() {
             notificationTime: notificationTime?.format('HH:mm') || null,
             recurrence: recurrence.length === 0 ? null : recurrence as Recurrence | null,
             isAllDay,
-            isCompleted: false,
             completionDates: []
         };
 

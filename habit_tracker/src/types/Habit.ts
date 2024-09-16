@@ -11,6 +11,5 @@ export interface Habit {
     notificationTime: string | null;
     recurrence: Recurrence | undefined | null;
     isAllDay: boolean;
-    isCompleted: boolean;
     completionDates: Date[];
 }

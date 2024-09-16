@@ -43,9 +43,9 @@ export default function HomePage() {
                                     <Typography color="text.secondary">
                                         {`Ricorrenza: ${habit.recurrence ? habit.recurrence : 'Nessuna'}`}
                                     </Typography>
-                                    <Typography color="text.secondary">
+                                    {/* <Typography color="text.secondary">
                                         {habit.isCompleted ? 'Completato' : 'Non completato'}
-                                    </Typography>
+                                    </Typography> */}
                                     <Typography color="text.secondary">
                                         {`Data di inizio: ${habit.startDate.toLocaleDateString()}`}
                                     </Typography>
