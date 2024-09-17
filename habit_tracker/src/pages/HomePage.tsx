@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 
-import { AppBar, Avatar, Box, Card, CardContent, Grid2, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Card, CardContent, Grid2, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useHabits } from '../hooks/useHabits';
 import { auth } from '../../firebase';
