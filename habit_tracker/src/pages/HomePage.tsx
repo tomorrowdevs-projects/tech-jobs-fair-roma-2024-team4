@@ -15,6 +15,8 @@ import {
 	MenuItem,
 	Toolbar,
 	Typography,
+	Checkbox,
+	FormControlLabel,
 	useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -34,7 +36,7 @@ export default function HomePage() {
 	useTheme();
 	const navigate = useNavigate();
 
-	const { error, habits, loading } = useHabits();
+	const { error, habits, loading, setHabits} = useHabits();
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
@@ -74,6 +76,18 @@ export default function HomePage() {
 		} catch (error) {
 		}
 	};
+
+	const handleCheckboxChange = (id : string) => {
+		const updatedHabits = habits.map(habit => {
+			if (habit.id === id) {
+				return {
+					...habit,isCompleted: !habit.isCompleted
+				};
+			}
+			return habit;
+		});
+		setHabits(updatedHabits);
+	}
 
 	if (loading) {
 		return (
@@ -149,6 +163,15 @@ export default function HomePage() {
 									<Typography color="text.secondary">
 										{habit.isAllDay ? 'Tutto il giorno' : `Dalle ${habit.startTime || 'N/A'} alle ${habit.endTime || 'N/A'}`}
 									</Typography>
+									<FormControlLabel
+										label="Completato"
+										control={
+											<Checkbox
+												checked={habit.isCompleted}
+												onChange={() => handleCheckboxChange(habit.id)}
+											/>
+										}
+									/>
 								</CardContent>
 							</Card>
 						))}

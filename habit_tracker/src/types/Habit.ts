@@ -12,5 +12,6 @@ export interface Habit {
     recurrence: Recurrence | undefined | null;
     recurrenceInterval: number | null;
     isAllDay: boolean;
+	isCompleted: boolean;
     completionDates: Date[];
 }

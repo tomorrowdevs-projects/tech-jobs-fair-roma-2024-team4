@@ -74,5 +74,6 @@ export const useHabits = () => {
         loading,
         setError,
         setLoading,
+		setHabits,
     };
 };
