@@ -13,10 +13,11 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import SignupPage from './pages/SignupPage';
-
+import theme from './styles/theme';
 import './App.css'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+/*
 const theme = createTheme({
   palette: {
     primary: {
@@ -24,6 +25,8 @@ const theme = createTheme({
     },
   },
 });
+*/
+
 function App() {
 
   return (
