@@ -23,16 +23,19 @@ import { useHabits } from '../hooks/useHabits';
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
 
+import AddHabitModal from './AddHabitModal';
+
 import 'react-calendar/dist/Calendar.css';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function HomePage() {
+	useTheme();
 	const navigate = useNavigate();
 
 	const { error, habits, loading } = useHabits();
-	useTheme();
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -48,6 +51,13 @@ export default function HomePage() {
 		return false;
 	});
 
+	const handleOpenModal = () => {
+		setModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setModalOpen(false);
+	};
 
 	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -146,10 +156,12 @@ export default function HomePage() {
 				</Grid2>
 			</Grid2>
 
+			<AddHabitModal open={modalOpen} onClose={handleCloseModal} />
+
 			<IconButton
 				color="primary"
 				aria-label="Aggiungi habit"
-				onClick={() => navigate('/addHabit')}
+				onClick={handleOpenModal}
 				sx={{
 					position: 'fixed',
 					bottom: 16,

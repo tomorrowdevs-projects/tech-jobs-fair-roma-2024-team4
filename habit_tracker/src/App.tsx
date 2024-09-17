@@ -6,7 +6,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import AddHabitForm from "./pages/AddHabitPage";
+import AddHabitModal from "./pages/AddHabitModal";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
@@ -26,10 +26,6 @@ function App() {
 						<Route
 							path="/"
 							element={<ProtectedRoute element={<HomePage />} />}
-						/>
-						<Route
-							path="/addHabit"
-							element={<ProtectedRoute element={<AddHabitForm />} />}
 						/>
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />

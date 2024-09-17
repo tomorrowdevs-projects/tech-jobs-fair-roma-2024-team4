@@ -10,6 +10,7 @@ export interface Habit {
     endTime: string | null;
     notificationTime: string | null;
     recurrence: Recurrence | undefined | null;
+    recurrenceInterval: number | null;
     isAllDay: boolean;
     completionDates: Date[];
 }
