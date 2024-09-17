@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -11,17 +12,10 @@ import LoginPage from "./pages/LoginPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import SignupPage from "./pages/SignupPage";
 
-import "./App.css";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import theme from "./styles/theme";
 
-/* const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#3f51b5',
-    },
-  },
-}); */
+import "./App.css";
+
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
