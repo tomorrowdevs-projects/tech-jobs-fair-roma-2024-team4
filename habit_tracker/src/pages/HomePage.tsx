@@ -96,10 +96,10 @@ export default function HomePage() {
 					<Typography variant="h6" sx={{ flexGrow: 1 }}>
 						Habit Tracker
 					</Typography>
+					<Typography variant="h6" sx={{ mr: 2 }}>
+						{auth.currentUser?.email}
+					</Typography>
 					<IconButton onClick={handleMenuOpen}>
-						<Typography variant="h6" sx={{ mr: 2 }}>
-							{auth.currentUser?.email}
-						</Typography>
 						<Avatar alt="Profile Icon" />
 					</IconButton>
 					<Menu
