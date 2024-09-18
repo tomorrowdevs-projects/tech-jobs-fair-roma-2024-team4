@@ -22,20 +22,27 @@
 ## Tecnologie Utilizzate
 
 - **Frontend**:
-  - [React.js](https://reactjs.org/) ⚛️
-  - [Tailwind CSS](https://tailwindcss.com/) 🎨
-- **Backend**:
-  - [Node.js](https://nodejs.org/) 💻
-- **Database & Autenticazione**:
-
-  - [Firebase](https://firebase.google.com/) 🔥
+  - [React](https://react.dev/) ⚛️
+  - [Material UI](https://mui.com/material-ui/) 🎨
+  - 
+- **Backend, Autenticazione, Databse & Hosting**:
+  - [Firebase](https://firebase.google.com/) 💻🔥
 
 - **Grafici**:
-  - [Chart.js](https://www.chartjs.org/) 📈 o [Recharts](https://recharts.org/) 📉
+  - [Chart.js](https://www.chartjs.org/) 📈 📉
+
+## Funzionalità Principali
+
+- **Autenticazione utente** 🔐: Gli utenti possono registrarsi e accedere tramite un sistema sicuro di autenticazione basato su Firebase.
+- **Definizione delle abitudini** 📋: Gli utenti possono creare nuove abitudini, specificando il nome, la descrizione e la frequenza (giornaliera, settimanale, mensile).
+- **Tracciamento delle abitudini** ✅: Gli utenti possono marcare come completata un'attività legata a un'abitudine.
+- **Notifiche** 🔔: Notifiche periodiche per ricordare agli utenti di completare le loro abitudini.
+- **Report e grafici** 📈: Visualizzazione di grafici che mostrano il progresso delle abitudini nel tempo.
+- **Condivisione delle abitudini** 🫶: Possibilità di coinvolgere altri utenti nel tracciamento di un'abitudine comune e inviare loro notifiche via email.
 
 ## Requisiti
 
-- Node.js >= 14.x
+- Node.js >= 20.17
 - Firebase Account
 - Git
 
@@ -78,6 +85,5 @@ Installare le dipendenze
 ```sh
 npm run dev
 ```
-
 
 [Go to Top](#top)
