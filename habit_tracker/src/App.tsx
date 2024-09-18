@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import SignupPage from "./pages/SignupPage";
+import GraphPage from "./pages/GraphPage";
 
 import theme from "./styles/theme";
 
@@ -35,6 +36,7 @@ function App() {
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />
 						<Route path="/password-reset" element={<ResetPasswordPage />} />
+						<Route path="/grafici" element={<GraphPage />} />
 					</Routes>
 				</BrowserRouter>
 			</ThemeProvider>

@@ -43,6 +43,11 @@ export default function HomePage() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
 
+	const handleNavigateToGraph = () => {
+		handleMenuClose();
+		navigate('/grafici');
+	};
+
 	// Funzione per generare date ricorrenti basate su frequenza e intervallo
 	const generateRecurrenceDates = (startDate: Date, endDate: Date | null,
 		frequency: Recurrence | undefined,
@@ -185,7 +190,7 @@ export default function HomePage() {
 						sx={{ mt: 8 }}
 					>
 						<MenuItem>Profilo</MenuItem>
-						<MenuItem>Grafici</MenuItem>
+						<MenuItem onClick={handleNavigateToGraph}>Grafici</MenuItem>
 						<MenuItem onClick={handleLogout}>Logout</MenuItem>
 					</Menu>
 				</Toolbar>
