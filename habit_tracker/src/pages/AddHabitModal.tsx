@@ -180,6 +180,7 @@ export default function AddHabitModal({ open, onClose, habit }: AddHabitModalPro
                         <Grid2 container spacing={2}>
                             <Grid2 sx={{ flex: 2 }}>
                                 <TimePicker
+                                    ampm={false}
                                     label="Orario di inizio"
                                     value={startTime}
                                     onChange={(time) => setStartTime(time)}
@@ -188,6 +189,7 @@ export default function AddHabitModal({ open, onClose, habit }: AddHabitModalPro
                             </Grid2>
                             <Grid2 sx={{ flex: 2 }}>
                                 <TimePicker
+                                    ampm={false}
                                     label="Orario di fine"
                                     value={endTime}
                                     onChange={(time) => setEndTime(time)}
@@ -241,6 +243,7 @@ export default function AddHabitModal({ open, onClose, habit }: AddHabitModalPro
                     </Grid2>
 
                     <TimePicker
+                        ampm={false}
                         label="Orario notifica"
                         value={notificationTime}
                         onChange={(time) => setNotificationTime(time)}

@@ -13,9 +13,15 @@ import SignupPage from "./pages/SignupPage";
 
 import theme from "./styles/theme";
 
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
+
 import "./App.css";
 
 function App() {
+
+	dayjs.locale('it'); // Imposta il locale predefinito a italiano
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<ThemeProvider theme={theme}>

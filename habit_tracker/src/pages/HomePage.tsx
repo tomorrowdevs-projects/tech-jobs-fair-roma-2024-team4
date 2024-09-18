@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 
@@ -62,7 +62,7 @@ export default function HomePage() {
 					currentDate.setDate(currentDate.getDate() + (interval || 1));
 					break;
 				case 'weekly':
-					currentDate.setDate(currentDate.getDate() + (interval || 1));
+					currentDate.setDate(currentDate.getDate() + ((interval || 1) * 7));
 					break;
 				case 'monthly':
 					currentDate.setMonth(currentDate.getMonth() + (interval || 1));
