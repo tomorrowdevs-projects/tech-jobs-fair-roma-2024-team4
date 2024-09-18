@@ -3,37 +3,30 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
 	palette: {
 		primary: {
-			main: "#3f51b5", // Violet Blue, Colore principale
-			light: "#757de8", // Tropical Indigo, Versione più chiara del colore principale
-			dark: "#002984", // Resolution Blue, Versione più scura del colore principale
-			contrastText: "#fff", // Bianco, Colore del testo su sfondo primario
+			main: '#1976d2', // Blu principale
+			light: '#63a4ff', // Blu chiaro
+			dark: '#115293', // Blu scuro
+			contrastText: '#ffffff', // Colore del testo in contrasto
 		},
 		secondary: {
-			main: "#FE9900", // Orange Peel, Colore secondario
-			light: "#ffb84d", // H Yellow, Versione più chiara del colore secondario
-			dark: "#cc7a00", // Ochre, Versione più scura del colore secondario
-			contrastText: "#000", // Nero, Colore del testo su sfondo secondario
-		},
-		background: {
-			default: "#f5f5f5", // White Smoke, Colore di sfondo principale
-			paper: "#daa466", // Earth Yellow, Colore di sfondo per i componenti di tipo "paper" (es. Card)
-		},
-		error: {
-			main: "#f44336", // Vermilion, Colore per gli errori
-		},
-		warning: {
-			main: "#ffa726", // Orange, Colore per i warning
+			main: '#2196f3', // Blu secondario
+			light: '#6ec6ff', // Blu secondario chiaro
+			dark: '#0069c0', // Blu secondario scuro
+			contrastText: '#ffffff', // Colore del testo in contrasto
 		},
 		info: {
-			main: "#29b6f6", // Piction Blue, Colore per le informazioni
+			main: '#0d47a1', // Blu informativo
+			light: '#5472d3', // Blu informativo chiaro
+			dark: '#002171', // Blu informativo scuro
+			contrastText: '#ffffff', // Colore del testo in contrasto
 		},
-		success: {
-			main: "#66bb6a", // Mantis, Colore per i messaggi di successo
+		background: {
+			default: '#e3f2fd', // Sfondo principale
+			paper: '#ffffff', // Sfondo della carta
 		},
 		text: {
-			primary: "#333", // Jet, Colore del testo principale
-			secondary: "#888", // Gray, Colore del testo secondario
-			disabled: "#bbb", // Silver, Colore del testo disabilitato
+			primary: '#000000', // Testo principale
+			secondary: '#333333', // Testo secondario
 		},
 	},
 });

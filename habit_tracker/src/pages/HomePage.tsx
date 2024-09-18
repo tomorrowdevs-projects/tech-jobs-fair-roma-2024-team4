@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 
 import {
+	useTheme,
 	AppBar,
 	Avatar,
 	Box,
-	Card,
-	CardContent,
 	CircularProgress,
 	Grid2,
 	IconButton,
@@ -15,9 +14,6 @@ import {
 	MenuItem,
 	Toolbar,
 	Typography,
-	Checkbox,
-	FormControlLabel,
-	useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -28,6 +24,9 @@ import { signOut } from 'firebase/auth';
 import AddHabitModal from './AddHabitModal';
 
 import 'react-calendar/dist/Calendar.css';
+import HabitCard from '../components/HabitCard';
+import { Habit } from '../types/Habit';
+import { Recurrence } from '../types/Recurrence';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -36,29 +35,85 @@ export default function HomePage() {
 	useTheme();
 	const navigate = useNavigate();
 
-	const { error, habits, loading, setHabits} = useHabits();
+	const { error, fetchHabits, habits, loading } = useHabits();
+	const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-	const filteredHabits = habits.filter(habit => {
-		const habitStart = habit.startDate;
-		const habitEnd = habit.endDate || habit.startDate;
 
+	// Funzione per generare date ricorrenti basate su frequenza e intervallo
+	const generateRecurrenceDates = (startDate: Date, endDate: Date | null,
+		frequency: Recurrence | undefined,
+		interval: number | undefined): Date[] => {
+		const dates: Date[] = [];
+		const now = new Date();
 
-		if (selectedDate instanceof Date) {
-			return selectedDate >= habitStart && selectedDate <= habitEnd;
+		// Usa una data di fine se fornita, altrimenti usa una data di fine molto futura
+		const end = endDate || new Date(now.getFullYear() + 10, 0, 1);
+
+		let currentDate = new Date(startDate);
+		dates.push(new Date(currentDate));
+
+		while (currentDate <= end) {
+			switch (frequency) {
+				case 'daily':
+					currentDate.setDate(currentDate.getDate() + (interval || 1));
+					break;
+				case 'weekly':
+					currentDate.setDate(currentDate.getDate() + (interval || 1));
+					break;
+				case 'monthly':
+					currentDate.setMonth(currentDate.getMonth() + (interval || 1));
+					break;
+				default:
+					break;
+			}
+
+			dates.push(new Date(currentDate));
 		}
-		return false;
-	});
 
-	const handleOpenModal = () => {
+		return dates;
+	};
+
+	// Funzione per controllare se la data selezionata è valida
+	const isDateSelectedValid = (habit: Habit, selectedDate: Date): boolean => {
+		const { startDate, endDate, recurrence, recurrenceInterval } = habit;
+
+		// Se non c'è un'endDate, controlla solo se la data selezionata è la startDate
+		if (!endDate) {
+			return selectedDate.toDateString() === startDate.toDateString();
+		}
+
+		// Controlla se la data selezionata è compresa tra startDate e endDate
+		if (selectedDate >= startDate && selectedDate <= endDate) {
+			// Se c'è una ricorrenza, controlla le date di ricorrenza
+			if (recurrence) {
+				const recurrenceDates = generateRecurrenceDates(startDate, endDate, recurrence, recurrenceInterval);
+				return recurrenceDates.some(date => date.toDateString() === selectedDate.toDateString());
+			}
+			return true;
+		}
+
+		return false;
+	};
+
+	// Filtro degli habit basato sulla data selezionata
+	const filteredHabits = useMemo(() => {
+		return habits.filter(habit => isDateSelectedValid(habit, selectedDate as Date));
+	}, [habits, selectedDate]);
+
+
+	const handleOpenModal = (habit: Habit | null) => {
+		setHabitToEdit(habit);
 		setModalOpen(true);
 	};
 
-	const handleCloseModal = () => {
+	const handleCloseModal = async () => {
 		setModalOpen(false);
+		setHabitToEdit(null);
+		await fetchHabits();
 	};
 
 	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -77,17 +132,6 @@ export default function HomePage() {
 		}
 	};
 
-	const handleCheckboxChange = (id : string) => {
-		const updatedHabits = habits.map(habit => {
-			if (habit.id === id) {
-				return {
-					...habit,isCompleted: !habit.isCompleted
-				};
-			}
-			return habit;
-		});
-		setHabits(updatedHabits);
-	}
 
 	if (loading) {
 		return (
@@ -155,36 +199,21 @@ export default function HomePage() {
 				<Grid2 sx={{ flex: 9, overflowY: 'auto', padding: 2 }}>
 					<Grid2 container spacing={2}>
 						{filteredHabits.map((habit) => (
-							<Card key={habit.id}>
-								<CardContent>
-									<Typography variant="h6" component="div">
-										{habit.title}
-									</Typography>
-									<Typography color="text.secondary">
-										{habit.isAllDay ? 'Tutto il giorno' : `Dalle ${habit.startTime || 'N/A'} alle ${habit.endTime || 'N/A'}`}
-									</Typography>
-									<FormControlLabel
-										label="Completato"
-										control={
-											<Checkbox
-												checked={habit.isCompleted}
-												onChange={() => handleCheckboxChange(habit.id)}
-											/>
-										}
-									/>
-								</CardContent>
-							</Card>
+							<HabitCard key={habit.id} habit={habit}
+								selectedDate={selectedDate as Date}
+								handleOpenModal={handleOpenModal}
+								onUpdate={fetchHabits} />
 						))}
 					</Grid2>
 				</Grid2>
 			</Grid2>
 
-			<AddHabitModal open={modalOpen} onClose={handleCloseModal} />
+			<AddHabitModal open={modalOpen} onClose={handleCloseModal} habit={habitToEdit} />
 
 			<IconButton
 				color="primary"
 				aria-label="Aggiungi habit"
-				onClick={handleOpenModal}
+				onClick={() => handleOpenModal(null)}
 				sx={{
 					position: 'fixed',
 					bottom: 16,

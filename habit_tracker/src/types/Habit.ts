@@ -5,13 +5,12 @@ export interface Habit {
     userId: string;
     title: string;
     startDate: Date;
-    endDate: Date | null;
-    startTime: string | null;
-    endTime: string | null;
-    notificationTime: string | null;
-    recurrence: Recurrence | undefined | null;
-    recurrenceInterval: number | null;
+    endDate?: Date;
+    startTime?: string;
+    endTime?: string;
+    notificationTime?: string;
+    recurrence?: Recurrence;
+    recurrenceInterval?: number;
     isAllDay: boolean;
-	isCompleted: boolean;
     completionDates: Date[];
 }

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import type { } from '@mui/x-date-pickers/AdapterDayjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,10 +26,11 @@ import { isRecurrence, Recurrence } from '../types/Recurrence';
 interface AddHabitModalProps {
     open: boolean;
     onClose: () => void;
+    habit?: Habit | null;
 }
 
-export default function AddHabitModal({ open, onClose }: AddHabitModalProps) {
-    const { addHabit, error, setError } = useHabits();
+export default function AddHabitModal({ open, onClose, habit }: AddHabitModalProps) {
+    const { addHabit, editHabit, error, setError } = useHabits();
 
     const [title, setTitle] = useState<string>('');
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -41,6 +42,23 @@ export default function AddHabitModal({ open, onClose }: AddHabitModalProps) {
     const [recurrenceInterval, setRecurrenceInterval] = useState<number | null>(null);
     const [isAllDay, setIsAllDay] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (habit) {
+            setTitle(habit.title);
+            setStartDate(dayjs(habit.startDate));
+            setEndDate(habit.endDate ? dayjs(habit.endDate) : null);
+            setStartTime(habit.startTime ? dayjs(habit.startTime, 'HH:mm') : null);
+            setEndTime(habit.endTime ? dayjs(habit.endTime, 'HH:mm') : null);
+            setNotificationTime(habit.notificationTime ? dayjs(habit.notificationTime, 'HH:mm') : null);
+            setRecurrence(habit.recurrence || '');
+            setRecurrenceInterval(habit.recurrenceInterval || null);
+            setIsAllDay(habit.isAllDay);
+        }
+        else {
+            resetForm();
+        }
+    }, [habit]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -50,27 +68,62 @@ export default function AddHabitModal({ open, onClose }: AddHabitModalProps) {
             return;
         }
 
-        const newHabit: Habit = {
-            id: uuidv4(),
-            userId: '',
+        const habitToSave = getHabitFromForm();
+
+        if (habitToSave) {
+            if (!habit) {
+
+                try {
+                    await addHabit(habitToSave);
+                    onClose();
+                } catch (err) {
+                    setError('Errore durante l\'aggiunta dell\'habit.');
+                }
+            }
+            else {
+                try {
+                    console.log(habitToSave);
+                    await editHabit(habitToSave);
+                    onClose();
+                } catch (err) {
+                    setError('Errore durante la modifica dell\'habit.');
+                }
+            }
+        }
+    };
+
+    const getHabitFromForm = (): Habit | null => {
+        if (!title || !startDate)
+            return null;
+
+        const habitForm = {
+            id: habit?.id || uuidv4(),
+            userId: '', // Verrà popolato nell'hook useHabits
             title,
             startDate: startDate.toDate(),
-            endDate: endDate ? endDate.toDate() : null,
-            startTime: isAllDay ? null : startTime?.format('HH:mm') || null,
-            endTime: isAllDay ? null : endTime?.format('HH:mm') || null,
-            notificationTime: notificationTime?.format('HH:mm') || null,
-            recurrence: isRecurrence(recurrence.toString()) ? recurrence as Recurrence | null : null,
-            recurrenceInterval: recurrenceInterval,
+            endDate: endDate ? endDate.toDate() : undefined,
+            startTime: isAllDay ? undefined : startTime?.format('HH:mm') || undefined,
+            endTime: isAllDay ? undefined : endTime?.format('HH:mm') || undefined,
+            notificationTime: notificationTime?.format('HH:mm') || undefined,
+            recurrence: isRecurrence(recurrence.toString()) ? recurrence as Recurrence : undefined,
+            recurrenceInterval: recurrenceInterval ? recurrenceInterval : undefined,
             isAllDay,
             completionDates: []
         };
 
-        try {
-            await addHabit(newHabit);
-            onClose();
-        } catch (err) {
-            setError('Errore durante l\'aggiunta dell\'habit.');
-        }
+        return habitForm;
+    }
+
+    const resetForm = () => {
+        setTitle('');
+        setStartDate(null);
+        setEndDate(null);
+        setStartTime(null);
+        setEndTime(null);
+        setNotificationTime(null);
+        setRecurrence('');
+        setRecurrenceInterval(null);
+        setIsAllDay(false);
     };
 
     return (
@@ -195,7 +248,7 @@ export default function AddHabitModal({ open, onClose }: AddHabitModalProps) {
                     />
 
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                        Aggiungi habit
+                        {!habit ? 'Aggiungi habit' : 'Modifica habit'}
                     </Button>
                 </form>
             </Box>

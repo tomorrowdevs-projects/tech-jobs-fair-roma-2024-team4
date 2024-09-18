@@ -6,7 +6,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import AddHabitModal from "./pages/AddHabitModal";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
