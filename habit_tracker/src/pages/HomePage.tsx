@@ -42,6 +42,7 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+	useNotifications(habits);
 
 	const handleNavigateToGraph = () => {
 		handleMenuClose();

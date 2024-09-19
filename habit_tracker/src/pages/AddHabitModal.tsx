@@ -16,7 +16,7 @@ import {
 	Grid2,
 } from "@mui/material";
 
-import { DatePicker, TimePicker, TimeView } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 
 import { useHabits } from "../hooks/useHabits";
 
