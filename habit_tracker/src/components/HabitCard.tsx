@@ -48,7 +48,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenMo
                 </Typography>
                 <Typography color="text.secondary">
                     {habit.isAllDay ? 'Tutto il giorno' : habit.endDate ?
-                        `Alle ${habit.startTime}` : `Dalle ${habit.startTime} alle ${habit.endTime}`}
+                        `Dalle ${habit.startTime} alle ${habit.endTime}` : `Alle ${habit.startTime}`}
                 </Typography>
             </CardContent>
             <CardContent>

@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 
 import "./App.css";
+import NotificationProvider from "./components/NotificationProvider";
 
 function App() {
 
@@ -25,18 +26,20 @@ function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<BrowserRouter>
-					<Routes>
-						<Route
-							path="/"
-							element={<ProtectedRoute element={<HomePage />} />}
-						/>
-						<Route path="/login" element={<LoginPage />} />
-						<Route path="/signup" element={<SignupPage />} />
-						<Route path="/password-reset" element={<ResetPasswordPage />} />
-					</Routes>
-				</BrowserRouter>
+				<NotificationProvider>
+					<CssBaseline />
+					<BrowserRouter>
+						<Routes>
+							<Route
+								path="/"
+								element={<ProtectedRoute element={<HomePage />} />}
+							/>
+							<Route path="/login" element={<LoginPage />} />
+							<Route path="/signup" element={<SignupPage />} />
+							<Route path="/password-reset" element={<ResetPasswordPage />} />
+						</Routes>
+					</BrowserRouter>
+				</NotificationProvider>
 			</ThemeProvider>
 		</LocalizationProvider>
 	);

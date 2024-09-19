@@ -16,12 +16,14 @@ import {
 } from 'firebase/firestore';
 
 import { Habit } from '../types/Habit';
+import { useNotifications } from './useNotification';
 
 export const useHabits = () => {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    useNotifications(habits);
 
     const getHabitRefById = async (id: string): Promise<DocumentReference | null> => {
         try {
