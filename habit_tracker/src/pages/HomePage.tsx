@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 
 import {
@@ -115,6 +115,25 @@ export default function HomePage() {
 		);
 	}, [habits, selectedDate]);
 
+	const isMorning = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 0 && time < 12;
+	};
+
+	const isAfternoon = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 12 && time < 18;
+	};
+
+	const isEvening = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 18 || time < 6;
+	};
+
+
 	const handleOpenModal = (habit: Habit | null) => {
 		setHabitToEdit(habit);
 		setModalOpen(true);
@@ -138,7 +157,7 @@ export default function HomePage() {
 		try {
 			await signOut(auth);
 			navigate("/");
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	if (loading) {
@@ -173,9 +192,24 @@ export default function HomePage() {
 		<Box sx={{ height: "90vh" }}>
 			<AppBar position="static" sx={{ height: "80px" }}>
 				<Toolbar sx={{ height: "80px" }}>
-					<Typography variant="h6" sx={{ flexGrow: 1 }}>
-						Habit Tracker
-					</Typography>
+					<Link
+						to="/"
+						style={{
+							marginRight: 'auto',
+							textDecoration: 'none',
+							color: 'inherit',
+						}}
+					>
+						<Typography
+							variant="h6"
+							sx={{
+								flexGrow: 1,
+								cursor: 'pointer',
+							}}
+						>
+							Habit Tracker
+						</Typography>
+					</Link>
 					<Typography variant="h6" sx={{ mr: 2 }}>
 						{auth.currentUser?.email}
 					</Typography>
@@ -219,6 +253,7 @@ export default function HomePage() {
 						overflowY: "auto",
 						padding: { xs: 1, md: 2 },
 						display: "flex",
+						marginBottom: "auto",
 						justifyContent: "center",
 					}}
 				>
@@ -232,20 +267,72 @@ export default function HomePage() {
 						padding: 2,
 					}}
 				>
-					<Grid2
-						container
-						spacing={2}
-						sx={{ display: "flex", justifyContent: "center" }}
-					>
-						{filteredHabits.map(habit => (
-							<HabitCard
-								key={habit.id}
-								habit={habit}
-								selectedDate={selectedDate as Date}
-								handleOpenModal={handleOpenModal}
-								onUpdate={fetchHabits}
-							/>
-						))}
+					<Typography variant="h6">Tutto il giorno</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => habit.isAllDay)
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Mattina</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isMorning(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Pomeriggio</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isAfternoon(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Sera</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isEvening(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
 					</Grid2>
 				</Grid2>
 			</Grid2>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import dayjs, { Dayjs } from "dayjs";
-import type {} from "@mui/x-date-pickers/AdapterDayjs";
+import type { } from "@mui/x-date-pickers/AdapterDayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -139,7 +139,7 @@ export default function AddHabitModal({
 					top: "50%",
 					left: "50%",
 					transform: "translate(-50%, -50%)",
-					width: 600,
+					minWidth: 400,
 					bgcolor: "background.default",
 					boxShadow: 24,
 					p: 4,
@@ -246,8 +246,8 @@ export default function AddHabitModal({
 											recurrence === "daily"
 												? 30
 												: recurrence === "weekly"
-												? 52
-												: 12,
+													? 52
+													: 12,
 									}}
 								/>
 							)}

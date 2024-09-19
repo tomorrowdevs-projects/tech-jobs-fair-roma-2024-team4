@@ -38,7 +38,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenMo
     const isCompleted = habit.completionDates.some(date => date.toDateString() === selectedDate.toDateString());
 
     return (
-        <Card>
+        <Card sx={{ width: 250 }}>
             <CardContent>
                 <Typography
                     variant="h6"
