@@ -16,7 +16,7 @@ import {
 	Grid2,
 } from "@mui/material";
 
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker, TimeView } from "@mui/x-date-pickers";
 
 import { useHabits } from "../hooks/useHabits";
 
@@ -66,6 +66,30 @@ export default function AddHabitModal({
 		}
 	}, [habit]);
 
+	const shouldDisableNotificationTime = (time: Dayjs | null) => {
+		if (time && startTime) {
+			return time > startTime;
+		}
+
+		return false;
+	};
+
+	const shouldDisableEndTime = (time: Dayjs | null) => {
+		if (time && startTime) {
+			return time < startTime;
+		}
+
+		return false;
+	};
+
+	const shouldDisableEndDate = (date: Dayjs | null) => {
+		if (date && startDate) {
+			return date < startDate;
+		}
+
+		return false;
+	}
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -86,7 +110,6 @@ export default function AddHabitModal({
 				}
 			} else {
 				try {
-					console.log(habitToSave);
 					await editHabit(habitToSave);
 					onClose();
 				} catch (err) {
@@ -175,6 +198,7 @@ export default function AddHabitModal({
 								label="Data di fine"
 								value={endDate}
 								onChange={date => setEndDate(date)}
+								shouldDisableDate={shouldDisableEndDate}
 								sx={{ my: 2 }}
 							/>
 						</Grid2>
@@ -197,6 +221,7 @@ export default function AddHabitModal({
 									label="Orario di fine"
 									value={endTime}
 									onChange={time => setEndTime(time)}
+									shouldDisableTime={shouldDisableEndTime}
 									sx={{ my: 2 }}
 								/>
 							</Grid2>
@@ -259,6 +284,7 @@ export default function AddHabitModal({
 						label="Orario notifica"
 						value={notificationTime}
 						onChange={time => setNotificationTime(time)}
+						shouldDisableTime={shouldDisableNotificationTime}
 						sx={{ my: 2 }}
 					/>
 

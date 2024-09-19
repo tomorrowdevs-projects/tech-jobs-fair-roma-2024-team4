@@ -22,6 +22,15 @@ export const useHabits = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                fetchHabits();
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const getHabitRefById = async (id: string): Promise<DocumentReference | null> => {
         try {
@@ -59,6 +68,7 @@ export const useHabits = () => {
             await addDoc(collection(db, 'habits'), habit);
         } catch (e) {
             setError('Errore durante l\'aggiunta dell\'habit.');
+            console.error(e);
         }
     };
 
@@ -161,16 +171,6 @@ export const useHabits = () => {
         }, {} as T);
     };
 
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) {
-                fetchHabits();
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
 
     return {
         addHabit,

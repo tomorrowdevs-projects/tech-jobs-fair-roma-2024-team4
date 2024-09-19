@@ -15,6 +15,8 @@ interface HabitCardProps {
     onUpdate: () => void;
 }
 
+
+
 const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenModal, onUpdate }) => {
     const { completeHabit, deleteHabit } = useHabits();
     const [open, setOpen] = useState(false);  // Stato per aprire/chiudere la finestra di dialogo
@@ -55,8 +57,8 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenMo
                         {habit.title}
                     </Typography>
                     <Typography color="text.secondary">
-                        {habit.isAllDay ? 'Tutto il giorno' : habit.endDate ?
-                            `Alle ${habit.startTime}` : `Dalle ${habit.startTime} alle ${habit.endTime}`}
+                        {habit.isAllDay ? 'Tutto il giorno' : habit.endTime ?
+                             `Dalle ${habit.startTime} alle ${habit.endTime}` : `Alle ${habit.startTime}`}
                     </Typography>
                 </CardContent>
                 <CardContent>
