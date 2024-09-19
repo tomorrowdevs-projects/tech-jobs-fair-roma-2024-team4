@@ -46,7 +46,7 @@ export default function HomePage() {
 
 	const handleNavigateToGraph = () => {
 		handleMenuClose();
-		navigate('/grafici');
+		navigate('/graph');
 	};
 
 	// Funzione per controllare se la data selezionata è valida

@@ -20,6 +20,7 @@ import 'dayjs/locale/it';
 
 
 import "./App.css";
+import GraphPage from "./pages/GraphPage";
 
 function App() {
 
@@ -35,6 +36,9 @@ function App() {
 							<Route
 								path="/"
 								element={<ProtectedRoute element={<HomePage />} />}
+							/>
+							<Route path="/graph"
+								element={<ProtectedRoute element={<GraphPage />} />}
 							/>
 							<Route path="/login" element={<LoginPage />} />
 							<Route path="/signup" element={<SignupPage />} />
