@@ -8,10 +8,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import NotificationProvider from "./components/NotificationProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import SignupPage from './pages/SignupPage';
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import SignupPage from "./pages/SignupPage";
 
 import theme from './styles/theme';
 

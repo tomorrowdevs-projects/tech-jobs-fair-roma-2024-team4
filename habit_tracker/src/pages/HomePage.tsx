@@ -42,7 +42,11 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-	useNotifications(habits);
+
+	const handleNavigateToGraph = () => {
+		handleMenuClose();
+		navigate('/grafici');
+	};
 
 	// Funzione per controllare se la data selezionata è valida
 	const isDateSelectedValid = (habit: Habit, selectedDate: Date): boolean => {
@@ -196,7 +200,7 @@ export default function HomePage() {
 						sx={{ mt: 8 }}
 					>
 						<MenuItem>Profilo</MenuItem>
-						<MenuItem>Grafici</MenuItem>
+						<MenuItem onClick={handleNavigateToGraph}>Grafici</MenuItem>
 						<MenuItem onClick={handleLogout}>Logout</MenuItem>
 					</Menu>
 				</Toolbar>
