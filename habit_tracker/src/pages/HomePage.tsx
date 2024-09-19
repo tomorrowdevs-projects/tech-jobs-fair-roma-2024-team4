@@ -1,101 +1,330 @@
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Grid2, Stack, Typography } from '@mui/material';
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Calendar from "react-calendar";
 
+import {
+	useTheme,
+	AppBar,
+	Avatar,
+	Box,
+	CircularProgress,
+	Grid2,
+	IconButton,
+	Menu,
+	MenuItem,
+	Toolbar,
+	Typography,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
-import { auth } from '../../firebase';
-import { signOut } from 'firebase/auth';
-import { useHabits } from '../hooks/useHabits';
+import { useHabits } from "../hooks/useHabits";
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
+
+import AddHabitModal from "./AddHabitModal";
+
+import "react-calendar/dist/Calendar.css";
+import HabitCard from "../components/HabitCard";
+import { Habit } from "../types/Habit";
+import { generateRecurrenceDates, useNotifications } from "../hooks/useNotification";
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function HomePage() {
+	useTheme();
+	const navigate = useNavigate();
 
-    const navigate = useNavigate();
-    const { error, habits, loading } = useHabits();
+	const { error, fetchHabits, habits, loading } = useHabits();
+	const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+	useNotifications(habits);
+
+	// Funzione per controllare se la data selezionata è valida
+	const isDateSelectedValid = (habit: Habit, selectedDate: Date): boolean => {
+		const { startDate, endDate, recurrence, recurrenceInterval } = habit;
+
+		// Se non c'è un'endDate, controlla solo se la data selezionata è la startDate
+		if (!endDate) {
+			return selectedDate.toDateString() === startDate.toDateString();
+		}
+
+		// Controlla se la data selezionata è compresa tra startDate e endDate
+		if (selectedDate >= startDate && selectedDate <= endDate) {
+			// Se c'è una ricorrenza, controlla le date di ricorrenza
+			if (recurrence) {
+				const recurrenceDates = generateRecurrenceDates(
+					startDate,
+					endDate,
+					recurrence,
+					recurrenceInterval
+				);
+				return recurrenceDates.some(
+					date => date.toDateString() === selectedDate.toDateString()
+				);
+			}
+			return true;
+		}
+
+		return false;
+	};
+
+	// Filtro degli habit basato sulla data selezionata
+	const filteredHabits = useMemo(() => {
+		return habits.filter(habit =>
+			isDateSelectedValid(habit, selectedDate as Date)
+		);
+	}, [habits, selectedDate]);
+
+	const isMorning = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 0 && time < 12;
+	};
+
+	const isAfternoon = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 12 && time < 18;
+	};
+
+	const isEvening = (startTime?: string) => {
+		if (!startTime) return false;
+		const time = parseInt(startTime.split(':')[0], 10);
+		return time >= 18 || time < 6;
+	};
 
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-        } catch (error) {
-        }
-    }
+	const handleOpenModal = (habit: Habit | null) => {
+		setHabitToEdit(habit);
+		setModalOpen(true);
+	};
 
-    if (loading) return <Typography variant="h6">Caricamento...</Typography>;
-    if (error) return <Typography variant="h6" color="error">{error}</Typography>;
+	const handleCloseModal = async () => {
+		setModalOpen(false);
+		setHabitToEdit(null);
+		await fetchHabits();
+	};
 
-    return (
-        <Grid2 container spacing={2} sx={{ height: '100vh' }}>
+	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-            <Grid2 sx={{ overflowY: 'auto', padding: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                    Ciao! Sei loggato con l'e-mail: {auth.currentUser?.email}
-                </Typography>
-                <Box sx={{ padding: 2 }}>
-                    <Stack spacing={2}>
-                        {habits.map((habit) => (
-                            <Card key={habit.id}>
-                                <CardContent>
-                                    <Typography variant="h6" component="div">
-                                        {habit.title}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {habit.isAllDay ? 'Tutto il giorno' : `Dalle ${habit.startTime || 'N/A'} alle ${habit.endTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Ricorrenza: ${habit.recurrence ? habit.recurrence : 'Nessuna'}`}
-                                    </Typography>
-                                    {/* <Typography color="text.secondary">
-                                        {habit.isCompleted ? 'Completato' : 'Non completato'}
-                                    </Typography> */}
-                                    <Typography color="text.secondary">
-                                        {`Data di inizio: ${habit.startDate.toLocaleDateString()}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Data di fine: ${habit.endDate ? habit.endDate.toLocaleDateString() : 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Orario di inizio: ${habit.startTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Orario di fine: ${habit.endTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Notifica alle: ${habit.notificationTime || 'N/A'}`}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {`Date di completamento: ${habit.completionDates.map(date => date.toLocaleDateString()).join(', ')}`}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </Stack>
-                </Box>
-            </Grid2>
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
 
+	const handleLogout = async () => {
+		try {
+			await signOut(auth);
+			navigate("/");
+		} catch (error) { }
+	};
 
-            <Grid2 sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', mb: 2 }}>
-                    <Button variant="contained" color="primary" sx={{ width: '40%' }}
-                        onClick={() => navigate('/addHabit')}>
-                        Aggiungi habit
-                    </Button>
-                    <Button variant="contained" color="secondary" sx={{ width: '40%' }}>
-                        Test 1
-                    </Button>
-                </Box>
+	if (loading) {
+		return (
+			<Grid2
+				container
+				sx={{
+					height: "100vh",
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					textAlign: "center",
+				}}
+			>
+				<Box>
+					<CircularProgress sx={{ color: "primary.main" }} />
+					<Typography variant="h6" mt={2}>
+						Caricamento...
+					</Typography>
+				</Box>
+			</Grid2>
+		);
+	}
+	if (error)
+		return (
+			<Typography variant="h6" color="error">
+				{error}
+			</Typography>
+		);
 
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', mb: 2 }}>
-                    <Button variant="contained" color="success" sx={{ width: '40%' }}>
-                        Test 2
-                    </Button>
-                    <Button variant="contained" color="error" sx={{ width: '40%' }}>
-                        Test 3
-                    </Button>
-                </Box>
+	return (
+		<Box sx={{ height: "90vh" }}>
+			<AppBar position="static" sx={{ height: "80px" }}>
+				<Toolbar sx={{ height: "80px" }}>
+					<Link
+						to="/"
+						style={{
+							marginRight: 'auto',
+							textDecoration: 'none',
+							color: 'inherit',
+						}}
+					>
+						<Typography
+							variant="h6"
+							sx={{
+								flexGrow: 1,
+								cursor: 'pointer',
+							}}
+						>
+							Habit Tracker
+						</Typography>
+					</Link>
+					<Typography variant="h6" sx={{ mr: 2 }}>
+						{auth.currentUser?.email}
+					</Typography>
+					<IconButton onClick={handleMenuOpen}>
+						<Avatar alt="Profile Icon" />
+					</IconButton>
+					<Menu
+						anchorEl={anchorEl}
+						open={Boolean(anchorEl)}
+						onClose={handleMenuClose}
+						anchorOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						transformOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						sx={{ mt: 8 }}
+					>
+						<MenuItem>Profilo</MenuItem>
+						<MenuItem>Grafici</MenuItem>
+						<MenuItem onClick={handleLogout}>Logout</MenuItem>
+					</Menu>
+				</Toolbar>
+			</AppBar>
 
-                <Button variant="contained" color="primary" onClick={handleLogout} sx={{ width: '40%' }}>
-                    Logout
-                </Button>
-            </Grid2>
-        </Grid2>
-    )
+			<Grid2
+				container
+				sx={{
+					flex: 1,
+					overflow: "hidden",
+					flexDirection: { xs: "column", md: "row" },
+					display: "flex",
+					justifyContent: "center",
+				}}
+			>
+				<Grid2
+					sx={{
+						flex: 3,
+						overflowY: "auto",
+						padding: { xs: 1, md: 2 },
+						display: "flex",
+						marginBottom: "auto",
+						justifyContent: "center",
+					}}
+				>
+					<Calendar onChange={setSelectedDate} value={selectedDate} />
+				</Grid2>
+
+				<Grid2
+					sx={{
+						flex: 9,
+						overflowY: "auto",
+						padding: 2,
+					}}
+				>
+					<Typography variant="h6">Tutto il giorno</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => habit.isAllDay)
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Mattina</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isMorning(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Pomeriggio</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isAfternoon(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+
+					<Typography variant="h6">Sera</Typography>
+					<Grid2 container spacing={2} sx={{ padding: 2 }}>
+
+						{filteredHabits
+							.filter((habit) => !habit.isAllDay && isEvening(habit.startTime))
+							.map((habit) => (
+								<HabitCard
+									key={habit.id}
+									habit={habit}
+									selectedDate={selectedDate as Date}
+									handleOpenModal={handleOpenModal}
+									onUpdate={fetchHabits}
+								/>
+							))}
+
+					</Grid2>
+				</Grid2>
+			</Grid2>
+
+			<AddHabitModal
+				open={modalOpen}
+				onClose={handleCloseModal}
+				habit={habitToEdit}
+			/>
+
+			<IconButton
+				color="primary"
+				aria-label="Aggiungi habit"
+				onClick={() => handleOpenModal(null)}
+				sx={{
+					position: "fixed",
+					bottom: 16,
+					right: 16,
+					bgcolor: "primary.main",
+					color: "white",
+					"&:hover": {
+						bgcolor: "primary.dark",
+					},
+				}}
+			>
+				<AddIcon />
+			</IconButton>
+		</Box>
+	);
 }
