@@ -16,7 +16,6 @@ interface HabitCardProps {
 }
 
 
-
 const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenModal, onUpdate }) => {
 
     const { completeHabit, deleteHabit } = useHabits();
@@ -47,7 +46,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, selectedDate, handleOpenMo
                     {habit.title}
                 </Typography>
                 <Typography color="text.secondary">
-                    {habit.isAllDay ? 'Tutto il giorno' : habit.endDate ?
+                    {habit.isAllDay ? 'Tutto il giorno' : habit.endTime ?
                         `Dalle ${habit.startTime} alle ${habit.endTime}` : `Alle ${habit.startTime}`}
                 </Typography>
             </CardContent>

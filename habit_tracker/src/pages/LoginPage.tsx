@@ -25,7 +25,6 @@ export default function LoginPage() {
 
 		try {
 			setError(null);
-			console.log(email, password);
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate("/");
 		} catch (error: any) {

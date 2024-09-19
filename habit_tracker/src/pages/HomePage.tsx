@@ -26,7 +26,7 @@ import AddHabitModal from "./AddHabitModal";
 import "react-calendar/dist/Calendar.css";
 import HabitCard from "../components/HabitCard";
 import { Habit } from "../types/Habit";
-import { Recurrence } from "../types/Recurrence";
+import { generateRecurrenceDates, useNotifications } from "../hooks/useNotification";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -42,42 +42,7 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-	// Funzione per generare date ricorrenti basate su frequenza e intervallo
-	const generateRecurrenceDates = (
-		startDate: Date,
-		endDate: Date | null,
-		frequency: Recurrence | undefined,
-		interval: number | undefined
-	): Date[] => {
-		const dates: Date[] = [];
-		const now = new Date();
-
-		// Usa una data di fine se fornita, altrimenti usa una data di fine molto futura
-		const end = endDate || new Date(now.getFullYear() + 10, 0, 1);
-
-		let currentDate = new Date(startDate);
-		dates.push(new Date(currentDate));
-
-		while (currentDate <= end) {
-			switch (frequency) {
-				case "daily":
-					currentDate.setDate(currentDate.getDate() + (interval || 1));
-					break;
-				case "weekly":
-					currentDate.setDate(currentDate.getDate() + (interval || 1) * 7);
-					break;
-				case "monthly":
-					currentDate.setMonth(currentDate.getMonth() + (interval || 1));
-					break;
-				default:
-					break;
-			}
-
-			dates.push(new Date(currentDate));
-		}
-
-		return dates;
-	};
+	useNotifications(habits);
 
 	// Funzione per controllare se la data selezionata è valida
 	const isDateSelectedValid = (habit: Habit, selectedDate: Date): boolean => {
