@@ -24,7 +24,7 @@
 - **Frontend**:
   - [React](https://react.dev/) ⚛️
   - [Material UI](https://mui.com/material-ui/) 🎨
-  - 
+    
 - **Backend, Autenticazione, Databse & Hosting**:
   - [Firebase](https://firebase.google.com/) 💻🔥
 
