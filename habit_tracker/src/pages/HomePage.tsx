@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Calendar from 'react-calendar';
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Calendar from "react-calendar";
 
 import {
 	useTheme,
@@ -14,19 +14,19 @@ import {
 	MenuItem,
 	Toolbar,
 	Typography,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
-import { useHabits } from '../hooks/useHabits';
-import { auth } from '../../firebase';
-import { signOut } from 'firebase/auth';
+import { useHabits } from "../hooks/useHabits";
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
 
-import AddHabitModal from './AddHabitModal';
+import AddHabitModal from "./AddHabitModal";
 
-import 'react-calendar/dist/Calendar.css';
-import HabitCard from '../components/HabitCard';
-import { Habit } from '../types/Habit';
-import { Recurrence } from '../types/Recurrence';
+import "react-calendar/dist/Calendar.css";
+import HabitCard from "../components/HabitCard";
+import { Habit } from "../types/Habit";
+import { Recurrence } from "../types/Recurrence";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -42,11 +42,13 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Value>(new Date());
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-
 	// Funzione per generare date ricorrenti basate su frequenza e intervallo
-	const generateRecurrenceDates = (startDate: Date, endDate: Date | null,
+	const generateRecurrenceDates = (
+		startDate: Date,
+		endDate: Date | null,
 		frequency: Recurrence | undefined,
-		interval: number | undefined): Date[] => {
+		interval: number | undefined
+	): Date[] => {
 		const dates: Date[] = [];
 		const now = new Date();
 
@@ -58,13 +60,13 @@ export default function HomePage() {
 
 		while (currentDate <= end) {
 			switch (frequency) {
-				case 'daily':
+				case "daily":
 					currentDate.setDate(currentDate.getDate() + (interval || 1));
 					break;
-				case 'weekly':
-					currentDate.setDate(currentDate.getDate() + ((interval || 1) * 7));
+				case "weekly":
+					currentDate.setDate(currentDate.getDate() + (interval || 1) * 7);
 					break;
-				case 'monthly':
+				case "monthly":
 					currentDate.setMonth(currentDate.getMonth() + (interval || 1));
 					break;
 				default:
@@ -90,8 +92,15 @@ export default function HomePage() {
 		if (selectedDate >= startDate && selectedDate <= endDate) {
 			// Se c'è una ricorrenza, controlla le date di ricorrenza
 			if (recurrence) {
-				const recurrenceDates = generateRecurrenceDates(startDate, endDate, recurrence, recurrenceInterval);
-				return recurrenceDates.some(date => date.toDateString() === selectedDate.toDateString());
+				const recurrenceDates = generateRecurrenceDates(
+					startDate,
+					endDate,
+					recurrence,
+					recurrenceInterval
+				);
+				return recurrenceDates.some(
+					date => date.toDateString() === selectedDate.toDateString()
+				);
 			}
 			return true;
 		}
@@ -101,9 +110,10 @@ export default function HomePage() {
 
 	// Filtro degli habit basato sulla data selezionata
 	const filteredHabits = useMemo(() => {
-		return habits.filter(habit => isDateSelectedValid(habit, selectedDate as Date));
+		return habits.filter(habit =>
+			isDateSelectedValid(habit, selectedDate as Date)
+		);
 	}, [habits, selectedDate]);
-
 
 	const handleOpenModal = (habit: Habit | null) => {
 		setHabitToEdit(habit);
@@ -127,11 +137,9 @@ export default function HomePage() {
 	const handleLogout = async () => {
 		try {
 			await signOut(auth);
-			navigate('/');
-		} catch (error) {
-		}
+			navigate("/");
+		} catch (error) {}
 	};
-
 
 	if (loading) {
 		return (
@@ -154,13 +162,17 @@ export default function HomePage() {
 			</Grid2>
 		);
 	}
-	if (error) return <Typography variant="h6" color="error">{error}</Typography>;
+	if (error)
+		return (
+			<Typography variant="h6" color="error">
+				{error}
+			</Typography>
+		);
 
 	return (
-		<Box sx={{ height: '90vh' }}>
-
-			<AppBar position="static" sx={{ height: '80px' }}>
-				<Toolbar sx={{ height: '80px' }}>
+		<Box sx={{ height: "90vh" }}>
+			<AppBar position="static" sx={{ height: "80px" }}>
+				<Toolbar sx={{ height: "80px" }}>
 					<Typography variant="h6" sx={{ flexGrow: 1 }}>
 						Habit Tracker
 					</Typography>
@@ -175,12 +187,12 @@ export default function HomePage() {
 						open={Boolean(anchorEl)}
 						onClose={handleMenuClose}
 						anchorOrigin={{
-							vertical: 'top',
-							horizontal: 'right',
+							vertical: "top",
+							horizontal: "right",
 						}}
 						transformOrigin={{
-							vertical: 'top',
-							horizontal: 'right',
+							vertical: "top",
+							horizontal: "right",
 						}}
 						sx={{ mt: 8 }}
 					>
@@ -191,38 +203,72 @@ export default function HomePage() {
 				</Toolbar>
 			</AppBar>
 
-			<Grid2 container sx={{ flex: 1, overflow: 'hidden' }}>
-				<Grid2 sx={{ flex: 3, overflowY: 'auto', padding: 2 }}>
+			<Grid2
+				container
+				sx={{
+					flex: 1,
+					overflow: "hidden",
+					flexDirection: { xs: "column", md: "row" },
+					display: "flex",
+					justifyContent: "center",
+				}}
+			>
+				<Grid2
+					sx={{
+						flex: 3,
+						overflowY: "auto",
+						padding: { xs: 1, md: 2 },
+						display: "flex",
+						justifyContent: "center",
+					}}
+				>
 					<Calendar onChange={setSelectedDate} value={selectedDate} />
 				</Grid2>
 
-				<Grid2 sx={{ flex: 9, overflowY: 'auto', padding: 2 }}>
-					<Grid2 container spacing={2}>
-						{filteredHabits.map((habit) => (
-							<HabitCard key={habit.id} habit={habit}
+				<Grid2
+					sx={{
+						flex: 9,
+						overflowY: "auto",
+						padding: 2,
+					}}
+				>
+					<Grid2
+						container
+						spacing={2}
+						sx={{ display: "flex", justifyContent: "center" }}
+					>
+						{filteredHabits.map(habit => (
+							<HabitCard
+								key={habit.id}
+								habit={habit}
 								selectedDate={selectedDate as Date}
 								handleOpenModal={handleOpenModal}
-								onUpdate={fetchHabits} />
+								onUpdate={fetchHabits}
+							/>
 						))}
 					</Grid2>
 				</Grid2>
 			</Grid2>
 
-			<AddHabitModal open={modalOpen} onClose={handleCloseModal} habit={habitToEdit} />
+			<AddHabitModal
+				open={modalOpen}
+				onClose={handleCloseModal}
+				habit={habitToEdit}
+			/>
 
 			<IconButton
 				color="primary"
 				aria-label="Aggiungi habit"
 				onClick={() => handleOpenModal(null)}
 				sx={{
-					position: 'fixed',
+					position: "fixed",
 					bottom: 16,
 					right: 16,
-					bgcolor: 'primary.main',
-					color: 'white',
-					'&:hover': {
-						bgcolor: 'primary.dark',
-					}
+					bgcolor: "primary.main",
+					color: "white",
+					"&:hover": {
+						bgcolor: "primary.dark",
+					},
 				}}
 			>
 				<AddIcon />
